@@ -1,0 +1,55 @@
+{
+  "$id": "bankagent/contracts/review.json",
+  "title": "review.json · 副2 → 编排器",
+  "description": "副2 只做规则校验，不调模型。verdict=reject 时 orchestrator 回退到环节 6。",
+  "type": "object",
+  "required": [
+    "task_id",
+    "verdict",
+    "violations",
+    "reject_count"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 4
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "reject"
+      ]
+    },
+    "violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule",
+          "detail",
+          "step"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "rule": {
+            "type": "string",
+            "minLength": 1
+          },
+          "detail": {
+            "type": "string"
+          },
+          "step": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "reject_count": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

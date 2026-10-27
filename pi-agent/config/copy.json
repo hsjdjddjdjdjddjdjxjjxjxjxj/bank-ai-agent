@@ -1,0 +1,89 @@
+{
+  "version": "0.1.0",
+  "_todo": [
+    "TODO(rule) 全部用户话术：图为『统一话术/包装』，未逐句定义；集中在此模板，改文案不用改代码",
+    "TODO(rule) 确认要素措辞（对象/金额/后果）为 SPEC 1.8 + 环节8 要求，具体措辞为实现补齐"
+  ],
+  "toolLabels": {
+    "query_balance": "查询余额",
+    "bill_query": "查账单",
+    "update_phone": "修改预留手机号",
+    "lock_card": "锁定卡片",
+    "transfer": "转账",
+    "report_loss": "卡片挂失"
+  },
+  "consequences": {
+    "query_balance": "只读查询，不改变任何账户状态",
+    "bill_query": "只读查询，不改变任何账户状态",
+    "update_phone": "新号码立即生效，旧号码收不到验证码",
+    "lock_card": "卡片立即不可用，可自助解锁",
+    "transfer": "资金实时转出，转出后不可撤销",
+    "report_loss": "卡片永久作废，需换卡才能使用"
+  },
+  "clarify": {
+    "ask": "还差{supplement}。{hint}",
+    "join": "和",
+    "hints": {
+      "payee": "收款人叫什么？",
+      "amountCents": "要转多少钱？",
+      "newPhone": "新的手机号是多少（11 位）？",
+      "cardId": "是哪张卡？"
+    },
+    "missingLabels": {
+      "payee": "收款人",
+      "amountCents": "金额",
+      "newPhone": "新手机号",
+      "cardId": "卡片"
+    },
+    "tooManyRounds": "这个问题我确认了 {rounds} 轮还没补齐要素，先不办了。可以换个说法，或者到手机银行「在线客服」让我同事接手。"
+  },
+  "understand": {
+    "notUnderstood": "抱歉，这句我没听懂。你可以直接说：查余额、这个月账单、把手机号改成 13800138000、转 500 给张三、卡片挂失。",
+    "nonBank": "这件事不在银行业务范围内，我不能受理。我能办的是账户查询、账单、转账、手机号变更、卡片管理这几类。"
+  },
+  "reject": {
+    "risk": "这句话里有试图改变规则或绕过校验的内容，我不会执行。请直接说要办哪一笔业务；这次请求已记入风险日志，必要时会转人工。",
+    "tier": "{toolLabel}需要 {requiredTier}才能办理，你当前档位是 {tier}。可以在手机银行「我的-身份认证」升级后再来，或到柜面办理。",
+    "irreversible": "{toolLabel}属于不可撤销操作，线上不能直接办。请带身份证到柜面，或在手机银行「安全中心-人脸识别」验证后办理。",
+    "illegal": "这个请求我没法受理：{reason}。可以调整后再试。"
+  },
+  "confirm": {
+    "header": "准备{toolLabel}，请核对确认要素：",
+    "item": "· {index}. 对象：{object}；金额：{amount}；后果：{consequence}",
+    "askUser": "回复「同意」我就执行，回复「拒绝」或「取消」就不执行；{ttl} 秒内有效。",
+    "dualReview": "这是高风险操作，按规则还需要复核岗二次授权，两个人都同意后才会真正执行。",
+    "pendingExists": "上一笔操作还在等确认。你可以先回复「同意」「拒绝」或「取消」，再发起新的请求。"
+  },
+  "suspend": {
+    "refused": "好的，这笔先不执行。任务已挂起，你随时可以回复「取消」结束本轮。",
+    "cancelled": "已取消，这笔操作没有执行，也没有留下待办。",
+    "noPending": "现在没有等你确认的操作。直接说要办什么业务就行。",
+    "expired": "这笔操作的确认有效期是 {ttl} 秒，已经超时自动作废，没有执行任何操作。要办的话请重新说一次。"
+  },
+  "result": {
+    "query_balance": "你的可用余额 {available} 元，账户总余额 {balance} 元。",
+    "bill_query": "本期账单合计 {total} 元。分类占比：{categories}。{anomalyText}",
+    "billAnomaly": "异常提醒：{merchant} {amount} 元，{reason}。",
+    "billNoAnomaly": "本期没有异常交易。",
+    "update_phone": "预留手机号已更新为 {phone}，新号码立即生效，旧号码从下一笔起收不到验证码。",
+    "transfer": "已向{payee}转账 {amount} 元。{receiptText}",
+    "lock_card": "{cardLabel}已{statusText}。",
+    "lockStatus": {
+      "locked": "锁定",
+      "active": "解锁"
+    },
+    "receipt": "凭证号 {receipt}。",
+    "failed": "{toolLabel}没办成：{reason}。"
+  },
+  "circuit": {
+    "body": "{kindText}，这一轮先停在这里，已转人工客服（工单 {ticket}），不会再执行任何操作。",
+    "kinds": {
+      "same-intent": "你连着{count}次问同一件事，我先把这轮结束掉",
+      "reject-limit": "内部复核已经驳回{count}次，按规则不能再重试",
+      "tool-failure": "工具连续失败{count}次，我先中断",
+      "non-bank-repeat": "你连着{count}次问的都是非银行业务的事情，我先把这轮结束掉",
+      "exception": "系统出现异常，我先中断"
+    }
+  },
+  "emergency": "系统暂时不可用，已转人工客服（工单 {ticket}），请稍候。"
+}

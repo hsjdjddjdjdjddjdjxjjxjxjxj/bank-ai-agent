@@ -1,0 +1,168 @@
+{
+  "version": "0.1.0",
+  "spec": "SPEC.md §2（结构齐全，业务阈值全部 TODO(rule)）",
+  "_todo": [
+    "TODO(rule) tiers / tierRequirements：SPEC 1.7 已给三档可达颜色，非猜测",
+    "TODO(rule) tools[*].level：由 SPEC 1.8 三色口径推出（查询绿 / 信息变更黄 / 资金红 / 不可逆红），图未逐工具列",
+    "TODO(rule) limits.singleTransferCents=500000（5000.00 元/笔）：图未定义，演示取值，见交付/assumptions.md",
+    "TODO(rule) limits.redDualReview=true：SPEC 1.8『红=强确认+双人复核』，保留开关便于行内关闭",
+    "TODO(rule) confirm.ttlSeconds=120：图未定义确认有效期",
+    "TODO(rule) clarify.maxRounds=3：任务包 assumptions 示例值",
+    "TODO(rule) review.maxReject=2：SPEC 1.6 建议 2 次，第 2 次即副3 熔断（S7B）",
+    "TODO(rule) review.maxSameIntent=3：SPEC 4 S8『同类意图≥3 熔断』",
+    "TODO(rule) review.maxToolFailures=2：图只写『工具调用连续失败』，次数未定义",
+    "TODO(rule) injection.patterns / selfCheck.*Patterns / domain.nonBankPatterns：图为示例触发条件，正则为实现补齐",
+    "TODO(rule) requestTypeLevels：请求类型（查询/办理/资金/敏感数据）到基础等级的映射为推导值"
+  ],
+  "tierLabels": {
+    "L1": "L1 基础",
+    "L2": "L2 标准",
+    "L3": "L3 高净值"
+  },
+  "tiers": {
+    "L1": [
+      "green"
+    ],
+    "L2": [
+      "green",
+      "yellow"
+    ],
+    "L3": [
+      "green",
+      "yellow",
+      "red"
+    ]
+  },
+  "tierRequirements": {
+    "green": "L1",
+    "yellow": "L2",
+    "red": "L3"
+  },
+  "tools": {
+    "query_balance": {
+      "level": "green",
+      "reversible": true,
+      "scene": "查询",
+      "irreversible": false
+    },
+    "bill_query": {
+      "level": "green",
+      "reversible": true,
+      "scene": "查询",
+      "irreversible": false
+    },
+    "update_phone": {
+      "level": "yellow",
+      "reversible": true,
+      "scene": "信息变更",
+      "irreversible": false
+    },
+    "lock_card": {
+      "level": "yellow",
+      "reversible": true,
+      "scene": "卡片",
+      "irreversible": false
+    },
+    "transfer": {
+      "level": "red",
+      "reversible": false,
+      "scene": "资金",
+      "irreversible": false
+    },
+    "report_loss": {
+      "level": "red",
+      "reversible": false,
+      "irreversible": true,
+      "scene": "卡片"
+    }
+  },
+  "requestTypes": {
+    "查询": "查询",
+    "信息变更": "办理",
+    "卡片": "办理",
+    "资金": "资金",
+    "敏感数据": "敏感数据"
+  },
+  "requestTypeLevels": {
+    "查询": "green",
+    "办理": "yellow",
+    "资金": "red",
+    "敏感数据": "red"
+  },
+  "defaults": {
+    "cardId": "card-002",
+    "_todo": "TODO(rule) 卡类业务未指明卡时的演示默认卡；真实环境应改为向用户追问或按卡列表选择（见 assumptions A-29）"
+  },
+  "limits": {
+    "singleTransferCents": 500000,
+    "redDualReview": true,
+    "_todo": "TODO(rule) 单笔限额/双人复核开关均为演示取值"
+  },
+  "confirm": {
+    "ttlSeconds": 120,
+    "_todo": "TODO(rule) 确认有效期"
+  },
+  "clarify": {
+    "maxRounds": 3,
+    "_todo": "TODO(rule) 反问轮次上限"
+  },
+  "review": {
+    "maxReject": 2,
+    "maxSameIntent": 3,
+    "maxToolFailures": 2,
+    "_todo": "TODO(rule) 驳回/重复意图/工具失败上限"
+  },
+  "injection": {
+    "enabled": true,
+    "patterns": [
+      "忽略.{0,8}(之前|以上|此前|前面|先前|原来).{0,8}(指令|规则|要求|设定|限制)",
+      "ignore\\\\s+previous",
+      "你现在是",
+      "扮演.{0,6}(管理员|客服|系统|开发者)",
+      "开发者模式|debug\\\\s*mode",
+      "输出.{0,8}(提示词|系统提示|system\\\\s*prompt)",
+      "system\\\\s*prompt",
+      "不要(遵守|理会).{0,6}(规则|指令|限制)"
+    ],
+    "_todo": "TODO(rule) 注入特征正则为实现补齐，图为示例"
+  },
+  "domain": {
+    "maxNonBank": 2,
+    "nonBankPatterns": [
+      "写(一首|个)?(诗|作文|故事|代码)",
+      "讲(个|一个)?笑话",
+      "天气|气温|下雨|空气质量",
+      "翻译(一下|这)",
+      "点外卖|订机票|订酒店|打车",
+      "股票推荐|买哪只股票"
+    ],
+    "_todo": "TODO(rule) 非业务域特征词与 domain.maxNonBank=2（环节3『标记多次请求』的次数）均为演示取值"
+  },
+  "selfCheck": {
+    "privilegePatterns": [
+      "别人的(账户|余额|卡|手机号)",
+      "(我|帮)(妈|爸|老婆|老公|孩子|朋友|同事)的(账户|余额|卡)",
+      "免密|免验证|不用验证|跳过验证|绕过(验证|风控)",
+      "管理员权限|后台权限|把(额度|权限)改成"
+    ],
+    "compliancePatterns": [
+      "套现|洗钱|分拆|刷单|跑分|代付|过账",
+      "帮我(走|过)一下账",
+      "(避开|规避)(风控|监管|监测)"
+    ],
+    "_todo": "TODO(rule) 越权/合规特征词为演示取值"
+  },
+  "fallback": {
+    "transferHuman": true,
+    "_todo": "TODO(rule) 异常是否强制转人工，图写『必要时转人工/合规』"
+  },
+  "statsKeyRules": [
+    "base-level",
+    "tier-reach",
+    "single-limit",
+    "irreversible",
+    "injection",
+    "out-of-domain",
+    "multi-step-escalate"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "$id": "bankagent/contracts/task.json",
+  "title": "task.json · 副1 → 主执",
+  "description": "SPEC 3 消息契约。agent 之间禁止裸字符串传参。",
+  "type": "object",
+  "required": [
+    "task_id",
+    "session_id",
+    "intent",
+    "slots",
+    "missing",
+    "tier",
+    "clarify_rounds",
+    "user_text_hash"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 4
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 4
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "slots": {
+      "type": "object"
+    },
+    "missing": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "L1",
+        "L2",
+        "L3"
+      ]
+    },
+    "clarify_rounds": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "user_text_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}$"
+    }
+  }
+}

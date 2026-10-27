@@ -1,0 +1,127 @@
+{
+  "$id": "bankagent/contracts/plan.json",
+  "title": "plan.json · 主执 → 副2",
+  "description": "结构化任务清单。每个子任务独立带权限标记，不允许整体打包降级。",
+  "type": "object",
+  "required": [
+    "task_id",
+    "plan",
+    "risk_flags",
+    "self_check",
+    "tier"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 4
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "L1",
+        "L2",
+        "L3"
+      ]
+    },
+    "risk_flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule",
+          "detail"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "rule": {
+            "type": "string",
+            "minLength": 1
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "self_check": {
+      "type": "object",
+      "required": [
+        "injection",
+        "privilege",
+        "compliance",
+        "passed"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "injection": {
+          "type": "boolean"
+        },
+        "privilege": {
+          "type": "boolean"
+        },
+        "compliance": {
+          "type": "boolean"
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    },
+    "plan": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "step",
+          "tool",
+          "args",
+          "level",
+          "reason_rules"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "tool": {
+            "type": "string",
+            "minLength": 1
+          },
+          "args": {
+            "type": "object"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "green",
+              "yellow",
+              "red"
+            ]
+          },
+          "reason_rules": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "base-level",
+                "tier-reach",
+                "single-limit",
+                "irreversible",
+                "injection",
+                "out-of-domain",
+                "multi-step-escalate"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

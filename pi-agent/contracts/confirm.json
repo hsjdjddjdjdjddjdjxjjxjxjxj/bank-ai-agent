@@ -1,0 +1,62 @@
+{
+  "$id": "bankagent/contracts/confirm.json",
+  "title": "confirm.json · 执行层/主执 → 副1",
+  "description": "黄/红确认请求。确认要素：对象 / 金额 / 后果。红=强确认+双人复核。",
+  "type": "object",
+  "required": [
+    "task_id",
+    "level",
+    "items",
+    "dual_review_required",
+    "expires_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 4
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "yellow",
+        "red"
+      ]
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "object",
+          "amount",
+          "consequence"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "object": {
+            "type": "string",
+            "minLength": 1
+          },
+          "amount": {
+            "type": "string",
+            "minLength": 1
+          },
+          "consequence": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "dual_review_required": {
+      "type": "boolean"
+    },
+    "expires_at": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "epoch 毫秒"
+    }
+  }
+}

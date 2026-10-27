@@ -1,0 +1,43 @@
+{
+  "$id": "bankagent/contracts/result.json",
+  "title": "result.json · 主执/副3 → 副1",
+  "description": "执行结果结构体。工具原始输出不出沙箱，必须由副1 包装后才能见用户。",
+  "type": "object",
+  "required": [
+    "task_id",
+    "ok",
+    "tool",
+    "receipt",
+    "data",
+    "error"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 4
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "tool": {
+      "type": "string",
+      "minLength": 1
+    },
+    "receipt": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "data": {
+      "type": "object"
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

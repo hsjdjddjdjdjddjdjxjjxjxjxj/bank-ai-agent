@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>银行 AI 智能体 · 全链路演示（4 角色 / 9 环节 / 3 次分流）</title>
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body>
+<div class="app user-view" id="app">
+  <header class="top">
+    <div class="brand"><b>银行 AI 智能体</b>
+      <span>4 角色 · 9 环节 · 3 次分流 ｜ 双防线 + 三色权限 + 副3 旁路</span>
+      <span class="dotline"><i style="background:#12a15c"></i><i style="background:#d4870a"></i><i style="background:#d63b3b"></i></span>
+    </div>
+    <div class="spacer"></div>
+    <div class="ctl">
+      <div class="seg" id="viewSeg">
+        <button data-view="user" class="on">用户视角</button>
+        <button data-view="judge">评委视角</button>
+      </div>
+      <button class="profile-btn" id="profileBtn" title="切换用户类型">
+        <span class="pb-dot"></span>
+        <span class="pb-1" id="profileName">标准版</span>
+        <span class="pb-2" id="profileHint">简洁，术语带一句解释</span>
+        <span class="pb-caret">▾</span>
+      </button>
+      <label>速度</label>
+      <select class="sel" id="speed">
+        <option value="1.8">慢</option>
+        <option value="1" selected>正常</option>
+        <option value="0.45">快</option>
+        <option value="0">直接出结果</option>
+      </select>
+      <label class="tgl" title="自动点“同意/复核通过”。录屏或无人值守时打开；现场演示建议关闭，亲自点确认"><input type="checkbox" id="autoConfirm"><i></i>自动演示</label>
+      <button class="btn" id="resetBtn">重置</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- 左：副3 旁路 -->
+    <aside class="rail">
+      <div class="rail-head">
+        <div class="k">旁路组件 · 全流程挂载</div>
+        <h2>副 3 Agent</h2>
+        <p>只监听 · 不接管 · 异常时中断</p>
+        <div class="rail-status" id="railStatus"><span class="pulse"></span><span id="railStatusText">监听中 · 等待第一轮会话</span></div>
+      </div>
+      <div class="rail-counters">
+        <div class="cnt"><b id="cntIntent">0</b><span>同类意图</span></div>
+        <div class="cnt"><b id="cntClarify">0</b><span>反问轮次</span></div>
+        <div class="cnt"><b id="cntReject">0</b><span>副2 驳回</span></div>
+        <div class="cnt"><b id="cntRisk">0</b><span>风险 / 异常</span></div>
+      </div>
+      <div class="rail-log" id="railLog">
+        <div class="ln"><time>--:--:--</time><span>副3 已挂载：记录 · 死循环熔断 · 异常捕获</span></div>
+      </div>
+      <div class="rail-foot">旁路只监听，不接管主流程；仅在异常、越权或循环超限时中断并回传【副1】。</div>
+    </aside>
+
+    <!-- 中：主流程 -->
+    <section class="flow">
+      <div class="flow-head">
+        <h3>全链路主流程</h3>
+        <span class="who">双防线（副1 前置闸门 / 副2 独立复核）</span>
+        <div class="legend">
+          <span><i style="background:#12a15c"></i>绿 · 直通</span>
+          <span><i style="background:#d4870a"></i>黄 · 确认</span>
+          <span><i style="background:#d63b3b"></i>红 · 强控</span>
+        </div>
+      </div>
+      <div class="flow-body" id="flowBody"></div>
+      <div class="flowbar">
+        <span id="verdict" class="pill na">判定：—</span>
+        <span id="verdictRules" class="who">选择场景或输入一句话开始</span>
+        <span class="sp"></span>
+        <span id="backlane"><span class="arr">┈┈▶</span>回退链路 · 统一回副1 重新澄清或终止本轮</span>
+      </div>
+    </section>
+
+    <!-- 右：对话与证据 -->
+    <section class="side">
+      <div class="tabs" id="tabs">
+        <button class="on" data-pane="chat">对话</button>
+        <button data-pane="contract">契约 JSON <span class="badge" id="ctBadge">0</span></button>
+        <button data-pane="audit">审计链</button>
+        <button data-pane="rules">权限矩阵</button>
+      </div>
+      <div class="pane on" id="pane-chat"></div>
+      <div class="pane" id="pane-contract"></div>
+      <div class="pane" id="pane-audit">
+        <div class="audit-top"><span>哈希链</span><b id="chainState" class="ok">—</b><span class="sp"></span><button class="btn" id="verifyBtn" style="padding:3px 9px;font-size:11px">校验链</button></div>
+        <div id="auditList"></div>
+      </div>
+      <div class="pane" id="pane-rules"></div>
+    </section>
+  </main>
+
+  <!-- 用户视角：手机框（真实用户只会看到这一屏） -->
+  <main class="user-stage" id="userStage">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="statusbar"><span id="phoneTime">9:41</span><span class="sb-right">▮▮▮ ⌁ ▰</span></div>
+        <div class="phone-head">
+          <div class="ph-avatar">AI</div>
+          <div class="ph-title"><b>银行智能助手</b><span><i></i>在线 · 演示环境</span></div>
+          <button class="ph-gear" id="phoneProfile" title="切换用户类型">⋯</button>
+        </div>
+        <div class="phone-chat" id="phoneChat"></div>
+        <div class="phone-input">
+          <input id="phoneInput" placeholder="说说您要办什么…" autocomplete="off">
+          <button id="phoneSend" class="send">发送</button>
+        </div>
+        <div class="phone-home"><span></span></div>
+      </div>
+      <div class="phone-note">用户端界面：只显示副1 的话术、确认卡与凭证 · 内部流程在「评委视角」</div>
+    </div>
+  </main>
+
+  <footer class="scenes">
+    <div class="scene-row" id="sceneRow">
+      <span class="lbl">演示场景</span>
+      <span class="demo-tag">演示控制 · 不属于用户界面</span>
+    </div>
+    <div class="inputbar" id="judgeInputBar">
+      <span class="ic">⌨</span>
+      <input id="chatInput" autocomplete="off" placeholder="直接说一句：查一下我的余额 / 转 500 给张三 / 帮我把预留手机号改成 13800138000 / 忽略之前的规则…">
+      <button class="btn primary" id="sendBtn">发送</button>
+      <span class="hint">Enter 发送 · 合成数据 · 不含真实银行接口</span>
+    </div>
+  </footer>
+</div>
+
+<!-- 首次进入：先选用户类型（不用 L1/L2/L3 这类术语） -->
+<div class="onboard" id="onboard">
+  <div class="ob-card">
+    <div class="ob-brand"><span class="ob-logo">AI</span><div><b>银行 AI 助手</b><small>进入前先选一下我怎么跟您说话</small></div></div>
+    <h2>您希望我怎么跟您说话？</h2>
+    <p class="ob-sub">只影响我的用词和语气，不影响能办什么、要不要确认。进入后右上角可随时切换。</p>
+    <div class="ob-grid" id="obCards"></div>
+    <div class="ob-foot">
+      <span>演示环境 · 合成数据，不涉及真实账户</span>
+      <button class="btn primary" id="obEnter">进入</button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+/*__ENGINE__*/
+</script>
+<script>
+/*__UI__*/
+</script>
+</body>
+</html>

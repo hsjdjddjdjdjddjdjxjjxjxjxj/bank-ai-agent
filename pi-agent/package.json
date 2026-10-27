@@ -1,0 +1,13 @@
+{
+  "name": "bank-agent-pi-impl",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "银行 AI 智能体 · Pi 底座参照实现（零依赖，Node 24 原生跑 TS）",
+  "scripts": {
+    "demo": "node run_demo.ts"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}
